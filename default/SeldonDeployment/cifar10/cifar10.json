@@ -40,7 +40,7 @@
                 "manager": "argocd-application-controller",
                 "operation": "Update",
                 "apiVersion": "machinelearning.seldon.io/v1",
-                "time": "2021-02-22T10:37:08Z",
+                "time": "2021-02-22T10:55:05Z",
                 "fieldsType": "FieldsV1",
                 "fieldsV1": {
                     "f:metadata": {
@@ -54,7 +54,7 @@
                 "manager": "manager",
                 "operation": "Update",
                 "apiVersion": "machinelearning.seldon.io/v1",
-                "time": "2021-02-22T10:37:10Z",
+                "time": "2021-02-22T10:55:15Z",
                 "fieldsType": "FieldsV1",
                 "fieldsV1": {
                     "f:spec": {
@@ -68,10 +68,6 @@
                         },
                         "f:deploymentStatus": {
                             ".": {},
-                            "f:cifar10-canary-0-cifar10-container": {
-                                ".": {},
-                                "f:replicas": {}
-                            },
                             "f:cifar10-default-0-cifar10-container": {
                                 ".": {},
                                 "f:availableReplicas": {},
@@ -86,12 +82,6 @@
                         "f:replicas": {},
                         "f:serviceStatus": {
                             ".": {},
-                            "f:cifar10-canary-cifar10-container": {
-                                ".": {},
-                                "f:grpcEndpoint": {},
-                                "f:httpEndpoint": {},
-                                "f:svcName": {}
-                            },
                             "f:cifar10-default": {
                                 ".": {},
                                 "f:grpcEndpoint": {},
@@ -169,15 +159,7 @@
                     "version": "default"
                 },
                 "svcOrchSpec": {},
-                "traffic": 100,
-                "explainer": {
-                    "type": "AnchorImages",
-                    "modelUri": "gs://seldon-models/tfserving/cifar10/explainer-py36-0.5.2",
-                    "containerSpec": {
-                        "name": "",
-                        "resources": {}
-                    }
-                }
+                "traffic": 100
             }
         ],
         "annotations": {
