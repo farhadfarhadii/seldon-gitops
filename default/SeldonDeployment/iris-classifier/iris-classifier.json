@@ -6,8 +6,118 @@
         "namespace": "default",
         "creationTimestamp": null,
         "labels": {
+            "app.kubernetes.io/instance": "seldon-gitops-default",
             "fluentd": "true"
-        }
+        },
+        "managedFields": [
+            {
+                "manager": "argocd-application-controller",
+                "operation": "Update",
+                "apiVersion": "machinelearning.seldon.io/v1",
+                "time": "2021-02-25T15:48:45Z",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:metadata": {
+                        "f:annotations": {
+                            ".": {},
+                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                        },
+                        "f:labels": {
+                            ".": {},
+                            "f:app.kubernetes.io/instance": {},
+                            "f:fluentd": {}
+                        }
+                    },
+                    "f:spec": {
+                        ".": {},
+                        "f:annotations": {
+                            ".": {},
+                            "f:seldon.io/engine-seldon-log-messages-externally": {}
+                        },
+                        "f:name": {},
+                        "f:protocol": {}
+                    }
+                }
+            },
+            {
+                "manager": "manager",
+                "operation": "Update",
+                "apiVersion": "machinelearning.seldon.io/v1",
+                "time": "2021-02-25T15:49:14Z",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:spec": {
+                        "f:predictors": {}
+                    },
+                    "f:status": {
+                        ".": {},
+                        "f:address": {
+                            ".": {},
+                            "f:url": {}
+                        },
+                        "f:deploymentStatus": {
+                            ".": {},
+                            "f:iris-classifier-canary-0-iris-classifier-container": {
+                                ".": {},
+                                "f:availableReplicas": {},
+                                "f:replicas": {}
+                            },
+                            "f:iris-classifier-default-0-iris-classifier-container": {
+                                ".": {},
+                                "f:availableReplicas": {},
+                                "f:replicas": {}
+                            },
+                            "f:iris-classifier-shadow-0-iris-classifier-container": {
+                                ".": {},
+                                "f:availableReplicas": {},
+                                "f:replicas": {}
+                            }
+                        },
+                        "f:replicas": {},
+                        "f:serviceStatus": {
+                            ".": {},
+                            "f:iris-classifier-canary": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            },
+                            "f:iris-classifier-canary-iris-classifier-container": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            },
+                            "f:iris-classifier-default": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            },
+                            "f:iris-classifier-default-iris-classifier-container": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            },
+                            "f:iris-classifier-shadow": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            },
+                            "f:iris-classifier-shadow-iris-classifier-container": {
+                                ".": {},
+                                "f:grpcEndpoint": {},
+                                "f:httpEndpoint": {},
+                                "f:svcName": {}
+                            }
+                        },
+                        "f:state": {}
+                    }
+                }
+            }
+        ]
     },
     "spec": {
         "name": "iris-classifier",
@@ -72,12 +182,12 @@
                 "graph": {
                     "name": "iris-classifier-container",
                     "type": "MODEL",
-                    "implementation": "SKLEARN_SERVER",
+                    "implementation": "XGBOOST_SERVER",
                     "endpoint": {
                         "service_host": "localhost",
                         "service_port": 9000
                     },
-                    "modelUri": "gs://seldon-models/sklearn/iris",
+                    "modelUri": "gs://seldon-models/xgboost/iris",
                     "logger": {
                         "mode": "all"
                     }
@@ -85,13 +195,13 @@
                 "componentSpecs": [
                     {
                         "metadata": {
-                            "creationTimestamp": "2021-02-25T13:01:08Z"
+                            "creationTimestamp": "2021-02-25T15:48:33Z"
                         },
                         "spec": {
                             "containers": [
                                 {
                                     "name": "iris-classifier-container",
-                                    "image": "seldonio/sklearnserver:1.5.0",
+                                    "image": "seldonio/xgboostserver:1.5.0",
                                     "ports": [
                                         {
                                             "name": "metrics",
@@ -99,7 +209,16 @@
                                             "protocol": "TCP"
                                         }
                                     ],
-                                    "resources": {},
+                                    "resources": {
+                                        "limits": {
+                                            "cpu": "1",
+                                            "memory": "1Gi"
+                                        },
+                                        "requests": {
+                                            "cpu": "100m",
+                                            "memory": "1Gi"
+                                        }
+                                    },
                                     "volumeMounts": [
                                         {
                                             "name": "seldon-podinfo",
@@ -123,10 +242,15 @@
                 "traffic": 90
             },
             {
-                "name": "shadow",
+                "name": "shadow2",
                 "graph": {
                     "name": "iris-classifier-container",
+                    "type": "MODEL",
                     "implementation": "XGBOOST_SERVER",
+                    "endpoint": {
+                        "service_host": "localhost",
+                        "service_port": 9000
+                    },
                     "modelUri": "gs://seldon-models/xgboost/iris",
                     "logger": {
                         "mode": "all"
@@ -141,6 +265,14 @@
                             "containers": [
                                 {
                                     "name": "iris-classifier-container",
+                                    "image": "seldonio/xgboostserver:1.5.0",
+                                    "ports": [
+                                        {
+                                            "name": "metrics",
+                                            "containerPort": 6000,
+                                            "protocol": "TCP"
+                                        }
+                                    ],
                                     "resources": {
                                         "limits": {
                                             "cpu": "1",
@@ -150,7 +282,13 @@
                                             "cpu": "100m",
                                             "memory": "1Gi"
                                         }
-                                    }
+                                    },
+                                    "volumeMounts": [
+                                        {
+                                            "name": "seldon-podinfo",
+                                            "mountPath": "/etc/podinfo"
+                                        }
+                                    ]
                                 }
                             ]
                         }
@@ -161,6 +299,137 @@
                     "seldon.io/canary": "false"
                 },
                 "engineResources": {},
+                "labels": {
+                    "version": "default"
+                },
+                "svcOrchSpec": {},
+                "shadow": true
+            },
+            {
+                "name": "shadow2",
+                "graph": {
+                    "name": "iris-classifier-container",
+                    "type": "MODEL",
+                    "implementation": "XGBOOST_SERVER",
+                    "endpoint": {
+                        "service_host": "localhost",
+                        "service_port": 9000
+                    },
+                    "modelUri": "gs://seldon-models/xgboost/iris",
+                    "logger": {
+                        "mode": "all"
+                    }
+                },
+                "componentSpecs": [
+                    {
+                        "metadata": {
+                            "creationTimestamp": "2021-02-25T15:48:33Z"
+                        },
+                        "spec": {
+                            "containers": [
+                                {
+                                    "name": "iris-classifier-container",
+                                    "image": "seldonio/xgboostserver:1.5.0",
+                                    "ports": [
+                                        {
+                                            "name": "metrics",
+                                            "containerPort": 6000,
+                                            "protocol": "TCP"
+                                        }
+                                    ],
+                                    "resources": {
+                                        "limits": {
+                                            "cpu": "1",
+                                            "memory": "1Gi"
+                                        },
+                                        "requests": {
+                                            "cpu": "100m",
+                                            "memory": "1Gi"
+                                        }
+                                    },
+                                    "volumeMounts": [
+                                        {
+                                            "name": "seldon-podinfo",
+                                            "mountPath": "/etc/podinfo"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "annotations": {
+                    "seldon.io/canary": "false"
+                },
+                "engineResources": {},
+                "labels": {
+                    "version": "default"
+                },
+                "svcOrchSpec": {},
+                "shadow": true
+            },
+            {
+                "name": "shadow2",
+                "graph": {
+                    "name": "iris-classifier-container",
+                    "type": "MODEL",
+                    "implementation": "XGBOOST_SERVER",
+                    "endpoint": {
+                        "service_host": "localhost",
+                        "service_port": 9000
+                    },
+                    "modelUri": "gs://seldon-models/xgboost/iris",
+                    "logger": {
+                        "mode": "all"
+                    }
+                },
+                "componentSpecs": [
+                    {
+                        "metadata": {
+                            "creationTimestamp": "2021-02-25T15:48:33Z"
+                        },
+                        "spec": {
+                            "containers": [
+                                {
+                                    "name": "iris-classifier-container",
+                                    "image": "seldonio/xgboostserver:1.5.0",
+                                    "ports": [
+                                        {
+                                            "name": "metrics",
+                                            "containerPort": 6000,
+                                            "protocol": "TCP"
+                                        }
+                                    ],
+                                    "resources": {
+                                        "limits": {
+                                            "cpu": "1",
+                                            "memory": "1Gi"
+                                        },
+                                        "requests": {
+                                            "cpu": "100m",
+                                            "memory": "1Gi"
+                                        }
+                                    },
+                                    "volumeMounts": [
+                                        {
+                                            "name": "seldon-podinfo",
+                                            "mountPath": "/etc/podinfo"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "annotations": {
+                    "seldon.io/canary": "false"
+                },
+                "engineResources": {},
+                "labels": {
+                    "version": "default"
+                },
                 "svcOrchSpec": {},
                 "shadow": true
             }
