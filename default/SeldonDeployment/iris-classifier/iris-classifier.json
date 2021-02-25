@@ -6,99 +6,8 @@
         "namespace": "default",
         "creationTimestamp": null,
         "labels": {
-            "app.kubernetes.io/instance": "seldon-gitops-default",
             "fluentd": "true"
-        },
-        "managedFields": [
-            {
-                "manager": "manager",
-                "operation": "Update",
-                "apiVersion": "machinelearning.seldon.io/v1",
-                "time": "2021-02-25T12:00:42Z",
-                "fieldsType": "FieldsV1",
-                "fieldsV1": {
-                    "f:status": {
-                        ".": {},
-                        "f:address": {
-                            ".": {},
-                            "f:url": {}
-                        },
-                        "f:deploymentStatus": {
-                            ".": {},
-                            "f:iris-classifier-canary-0-iris-classifier-container": {
-                                ".": {},
-                                "f:availableReplicas": {},
-                                "f:replicas": {}
-                            },
-                            "f:iris-classifier-default-0-iris-classifier-container": {
-                                ".": {},
-                                "f:availableReplicas": {},
-                                "f:replicas": {}
-                            }
-                        },
-                        "f:replicas": {},
-                        "f:serviceStatus": {
-                            ".": {},
-                            "f:iris-classifier-canary": {
-                                ".": {},
-                                "f:grpcEndpoint": {},
-                                "f:httpEndpoint": {},
-                                "f:svcName": {}
-                            },
-                            "f:iris-classifier-canary-iris-classifier-container": {
-                                ".": {},
-                                "f:grpcEndpoint": {},
-                                "f:httpEndpoint": {},
-                                "f:svcName": {}
-                            },
-                            "f:iris-classifier-default": {
-                                ".": {},
-                                "f:grpcEndpoint": {},
-                                "f:httpEndpoint": {},
-                                "f:svcName": {}
-                            },
-                            "f:iris-classifier-default-iris-classifier-container": {
-                                ".": {},
-                                "f:grpcEndpoint": {},
-                                "f:httpEndpoint": {},
-                                "f:svcName": {}
-                            }
-                        },
-                        "f:state": {}
-                    }
-                }
-            },
-            {
-                "manager": "argocd-application-controller",
-                "operation": "Update",
-                "apiVersion": "machinelearning.seldon.io/v1",
-                "time": "2021-02-25T13:00:07Z",
-                "fieldsType": "FieldsV1",
-                "fieldsV1": {
-                    "f:metadata": {
-                        "f:annotations": {
-                            ".": {},
-                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
-                        },
-                        "f:labels": {
-                            ".": {},
-                            "f:app.kubernetes.io/instance": {},
-                            "f:fluentd": {}
-                        }
-                    },
-                    "f:spec": {
-                        ".": {},
-                        "f:annotations": {
-                            ".": {},
-                            "f:seldon.io/engine-seldon-log-messages-externally": {}
-                        },
-                        "f:name": {},
-                        "f:predictors": {},
-                        "f:protocol": {}
-                    }
-                }
-            }
-        ]
+        }
     },
     "spec": {
         "name": "iris-classifier",
@@ -121,7 +30,7 @@
                 "componentSpecs": [
                     {
                         "metadata": {
-                            "creationTimestamp": "2021-02-25T13:00:09Z"
+                            "creationTimestamp": "2021-02-25T13:01:10Z"
                         },
                         "spec": {
                             "containers": [
@@ -176,7 +85,7 @@
                 "componentSpecs": [
                     {
                         "metadata": {
-                            "creationTimestamp": "2021-02-25T13:00:09Z"
+                            "creationTimestamp": "2021-02-25T13:01:10Z"
                         },
                         "spec": {
                             "containers": [
@@ -212,6 +121,39 @@
                 },
                 "svcOrchSpec": {},
                 "traffic": 90
+            },
+            {
+                "name": "shadow",
+                "graph": {
+                    "name": "iris-classifier-container",
+                    "implementation": "SKLEARN_SERVER",
+                    "modelUri": "gs://seldon-models/sklearn/iris",
+                    "logger": {
+                        "mode": "all"
+                    }
+                },
+                "componentSpecs": [
+                    {
+                        "metadata": {
+                            "creationTimestamp": "2021-02-25T13:01:08Z"
+                        },
+                        "spec": {
+                            "containers": [
+                                {
+                                    "name": "iris-classifier-container",
+                                    "resources": {}
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "annotations": {
+                    "seldon.io/canary": "false"
+                },
+                "engineResources": {},
+                "svcOrchSpec": {},
+                "shadow": true
             }
         ],
         "annotations": {
