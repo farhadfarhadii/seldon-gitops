@@ -61,10 +61,10 @@
                     "version": "default"
                 },
                 "svcOrchSpec": {},
-                "traffic": 90
+                "traffic": 100
             },
             {
-                "name": "canary",
+                "name": "shadow",
                 "graph": {
                     "name": "cifar10-container",
                     "implementation": "TENSORFLOW_SERVER",
@@ -76,7 +76,7 @@
                 "componentSpecs": [
                     {
                         "metadata": {
-                            "creationTimestamp": "2021-03-05T02:15:49Z"
+                            "creationTimestamp": "2021-03-05T02:15:57Z"
                         },
                         "spec": {
                             "containers": [
@@ -90,11 +90,11 @@
                 ],
                 "replicas": 1,
                 "annotations": {
-                    "seldon.io/canary": "true"
+                    "seldon.io/canary": "false"
                 },
                 "engineResources": {},
                 "svcOrchSpec": {},
-                "traffic": 10
+                "shadow": true
             }
         ],
         "annotations": {
